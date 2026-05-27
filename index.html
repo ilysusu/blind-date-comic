@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>相亲记录 — 一个前端程序员的故事</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+  :root {
+    --bg: #FFF8F0;
+    --panel-bg: #FFFFFF;
+    --ink: #2D2B2A;
+    --ink-light: #6B6560;
+    --accent: #E8636F;
+    --accent-soft: #F5A0A8;
+    --sky: #A8D8EA;
+    --sky-dark: #6BB7D0;
+    --warm: #FFD93D;
+    --warm-soft: #FFF0C2;
+    --pink: #FFB5C2;
+    --pink-soft: #FFE0E6;
+    --green: #98D8AA;
+    --border: #3D3A38;
+    --bubble: #FFFFFF;
+    --bubble-her: #FFE8EC;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Noto Sans SC', sans-serif;
+    color: var(--ink);
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  .comic-container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 12px 60px;
+    position: relative;
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    text-align: center;
+    padding: 40px 20px 30px;
+    position: relative;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      radial-gradient(circle at 20% 50%, rgba(232,99,111,0.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 30%, rgba(168,216,234,0.1) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .header h1 {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 36px;
+    color: var(--accent);
+    letter-spacing: 4px;
+    margin-bottom: 8px;
+    text-shadow: 2px 2px 0 rgba(232,99,111,0.15);
+  }
+  .header .subtitle {
+    font-family: 'ZCOOL KuaiLe', cursive;
+    font-size: 14px;
+    color: var(--ink-light);
+    letter-spacing: 2px;
+  }
+  .header .deco-line {
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--pink));
+    margin: 12px auto 0;
+    border-radius: 2px;
+  }
+
+  /* ===== CHAPTER TITLE ===== */
+  .chapter {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 32px 0 16px;
+    padding: 0 4px;
+  }
+  .chapter-num {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 28px;
+    color: var(--accent);
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .chapter-line {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-soft), transparent);
+  }
+  .chapter-title {
+    font-family: 'ZCOOL KuaiLe', cursive;
+    font-size: 16px;
+    color: var(--ink-light);
+    letter-spacing: 2px;
+    flex-shrink: 0;
+  }
+
+  /* ===== PANELS ===== */
+  .panel {
+    background: var(--panel-bg);
+    border: 2.5px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.08);
+  }
+  .panel-art {
+    width: 100%;
+    display: block;
+  }
+  .panel-caption {
+    padding: 10px 14px;
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--ink);
+    background: var(--panel-bg);
+    border-top: 1.5px dashed rgba(0,0,0,0.1);
+  }
+  .panel-caption.narrator {
+    font-style: italic;
+    color: var(--ink-light);
+    font-size: 12.5px;
+  }
+
+  /* ===== DIALOGUE PANEL ===== */
+  .dialogue-row {
+    display: flex;
+    gap: 10px;
+    padding: 14px;
+    align-items: flex-start;
+  }
+  .dialogue-row.reverse {
+    flex-direction: row-reverse;
+  }
+  .char-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 2px solid var(--border);
+    overflow: hidden;
+  }
+  .char-avatar.him { background: var(--sky); }
+  .char-avatar.her { background: var(--pink); }
+
+  .bubble-wrap {
+    max-width: 75%;
+    position: relative;
+  }
+  .bubble-name {
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--ink-light);
+  }
+  .bubble {
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 13.5px;
+    line-height: 1.7;
+    position: relative;
+    word-break: break-word;
+  }
+  .bubble.him {
+    background: var(--bubble);
+    border: 1.5px solid #ddd;
+    border-bottom-left-radius: 4px;
+  }
+  .bubble.her {
+    background: var(--bubble-her);
+    border: 1.5px solid var(--pink);
+    border-bottom-right-radius: 4px;
+  }
+  .bubble .thought {
+    font-size: 11px;
+    color: var(--ink-light);
+    font-style: italic;
+    display: block;
+    margin-top: 6px;
+  }
+
+  /* ===== SCENE ILLUSTRATION (SVG-based) ===== */
+  .scene-illustration {
+    width: 100%;
+    aspect-ratio: 16/10;
+    display: block;
+  }
+
+  /* ===== DOUBLE PANEL ===== */
+  .panel-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .panel-grid .panel {
+    margin-bottom: 0;
+  }
+
+  /* ===== FOOTER QUOTE ===== */
+  .feng-ge-quote {
+    margin: 40px 0 20px;
+    padding: 24px 20px;
+    background: linear-gradient(135deg, #2D2B2A, #3D3A38);
+    border-radius: 12px;
+    color: #F5E6D3;
+    position: relative;
+    overflow: hidden;
+  }
+  .feng-ge-quote::before {
+    content: '';
+    position: absolute;
+    top: -20px; right: -20px;
+    width: 100px; height: 100px;
+    background: radial-gradient(circle, rgba(232,99,111,0.2), transparent);
+    border-radius: 50%;
+  }
+  .feng-ge-quote .quote-icon {
+    font-size: 40px;
+    color: var(--accent);
+    font-family: Georgia, serif;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .feng-ge-quote p {
+    font-family: 'ZCOOL KuaiLe', cursive;
+    font-size: 14px;
+    line-height: 1.8;
+    position: relative;
+    z-index: 1;
+  }
+  .feng-ge-quote .attribution {
+    margin-top: 12px;
+    font-size: 12px;
+    color: rgba(245,230,211,0.6);
+    font-family: 'Noto Sans SC', sans-serif;
+    font-style: italic;
+  }
+
+  /* ===== END CARD ===== */
+  .end-card {
+    text-align: center;
+    padding: 30px 20px;
+    margin-top: 20px;
+  }
+  .end-card .end-text {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 22px;
+    color: var(--accent);
+    letter-spacing: 3px;
+  }
+  .end-card .end-sub {
+    font-size: 12px;
+    color: var(--ink-light);
+    margin-top: 8px;
+  }
+
+  /* ===== DECORATIVE ELEMENTS ===== */
+  .speed-lines {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .sfx {
+    font-family: 'ZCOOL KuaiLe', cursive;
+    font-size: 28px;
+    color: var(--accent);
+    position: absolute;
+    transform: rotate(-12deg);
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+    pointer-events: none;
+  }
+
+  /* ===== SCROLL ANIMATION ===== */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ===== SPECIAL PANELS ===== */
+  .panel.dramatic {
+    border-color: var(--accent);
+    border-width: 3px;
+  }
+  .panel.romantic {
+    border-color: var(--pink);
+    background: linear-gradient(180deg, #FFF5F7, #FFFFFF);
+  }
+  .panel.rain {
+    background: linear-gradient(180deg, #E8F4F8, #FFFFFF);
+  }
+
+  .inner-thought {
+    text-align: center;
+    padding: 12px 20px;
+    font-size: 13px;
+    color: var(--ink-light);
+    font-style: italic;
+    background: rgba(168,216,234,0.15);
+    border-left: 3px solid var(--sky);
+    margin: 0 14px 14px;
+    border-radius: 0 8px 8px 0;
+  }
+
+  /* ===== TIMELINE DOT ===== */
+  .timeline-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--warm-soft);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #8B7355;
+    margin: 10px 14px;
+  }
+  .timeline-date::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--warm);
+    border-radius: 50%;
+  }
+
+  /* Status bar at bottom */
+  .status-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0; right: 0;
+    background: rgba(255,248,240,0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(0,0,0,0.06);
+    padding: 8px 20px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--ink-light);
+    z-index: 100;
+    font-family: 'Noto Sans SC', sans-serif;
+  }
+</style>
+</head>
+<body>
+
+<div class="comic-container">
+
+  <!-- HEADER -->
+  <div class="header fade-in">
+    <h1>相亲记录</h1>
+    <div class="subtitle">一个上海前端程序员的真实故事</div>
+    <div class="deco-line"></div>
+  </div>
+
+  <!-- ==================== CHAPTER 1: 初识 ==================== -->
+  <div class="chapter fade-in">
+    <span class="chapter-num">壹</span>
+    <span class="chapter-line"></span>
+    <span class="chapter-title">初 识</span>
+  </div>
+
+  <div class="panel fade-in">
+    <svg class="scene-illustration" viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg">
+      <!-- Sky gradient -->
+      <defs>
+        <linearGradient id="sky1" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#A8D8EA;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#E8F4F8;stop-opacity:1" />
+        </linearGradient>
+        <linearGradient id="train" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#F0F0F0;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="480" height="300" fill="url(#sky1)"/>
+      <!-- Clouds -->
+      <ellipse cx="80" cy="60" rx="40" ry="20" fill="white" opacity="0.7"/>
+      <ellipse cx="110" cy="55" rx="30" ry="18" fill="white" opacity="0.8"/>
+      <ellipse cx="350" cy="80" rx="35" ry="16" fill="white" opacity="0.6"/>
+      <!-- Train track -->
+      <rect x="0" y="200" width="480" height="4" fill="#8B7355" rx="2"/>
+      <rect x="0" y="210" width="480" height="4" fill="#8B7355" rx="2"/>
+      <!-- Track ties -->
+      <g fill="#6B5B45">
+        <rect x="30" y="197" width="4" height="20" rx="1"/>
+        <rect x="70" y="197" width="4" height="20" rx="1"/>
+        <rect x="110" y="197" width="4" height="20" rx="1"/>
+        <rect x="150" y="197" width="4" height="20" rx="1"/>
+        <rect x="190" y="197" width="4" height="20" rx="1"/>
+        <rect x="230" y="197" width="4" height="20" rx="1"/>
+        <rect x="270" y="197" width="4" height="20" rx="1"/>
+        <rect x="310" y="197" width="4" height="20" rx="1"/>
+        <rect x="350" y="197" width="4" height="20" rx="1"/>
+        <rect x="390" y="197" width="4" height="20" rx="1"/>
+        <rect x="430" y="197" width="4" height="20" rx="1"/>
+      </g>
+      <!-- High-speed train -->
+      <g transform="translate(120, 150)">
+        <rect x="0" y="20" width="200" height="45" rx="20" fill="url(#train)" stroke="#ccc" stroke-width="1.5"/>
+        <rect x="0" y="30" width="200" height="30" fill="white" stroke="#ddd" stroke-width="0.5"/>
+        <!-- Windows -->
+        <rect x="20" y="28" width="20" height="18" rx="3" fill="#A8D8EA" stroke="#999" stroke-width="0.5"/>
+        <rect x="50" y="28" width="20" height="18" rx="3" fill="#A8D8EA" stroke="#999" stroke-width="0.5"/>
+        <rect x="80" y="28" width="20" height="18" rx="3" fill="#A8D8EA" stroke="#999" stroke-width="0.5"/>
+        <rect x="110" y="28" width="20" height="18" rx="3" fill="#A8D8EA" stroke="#999" stroke-width="0.5"/>
+        <rect x="140" y="28" width="20" height="18" rx="3" fill="#A8D8EA" stroke="#999" stroke-width="0.5"/>
+        <!-- Front nose -->
+        <path d="M200,20 Q220,20 220,42.5 Q220,65 200,65" fill="white" stroke="#ccc" stroke-width="1.5"/>
+        <!-- Speed lines -->
+        <line x1="-30" y1="35" x2="-5" y2="35" stroke="#E8636F" stroke-width="2" opacity="0.6"/>
+        <line x1="-40" y1="45" x2="-8" y2="45" stroke="#E8636F" stroke-width="1.5" opacity="0.4"/>
+        <line x1="-25" y1="55" x2="-3" y2="55" stroke="#E8636F" stroke-width="2" opacity="0.5"/>
+      </g>
+      <!-- Two figures on platform -->
+      <g transform="translate(350, 120)">
+        <!-- Him - with glasses -->
+        <circle cx="0" cy="0" r="12" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.5"/>
+        <rect x="-8" y="-4" width="16" height="8" rx="2" fill="none" stroke="#2D2B2A" stroke-width="1.2"/>
+        <line x1="-8" y1="0" x2="-14" y2="0" stroke="#2D2B2A" stroke-width="1.2"/>
+        <line x1="8" y1="0" x2="14" y2="0" stroke="#2D2B2A" stroke-width="1.2"/>
+        <rect x="-10" y="14" width="20" height="30" rx="4" fill="#5B8DB8" stroke="#2D2B2A" stroke-width="1.5"/>
+        <rect x="-14" y="18" width="6" height="20" rx="3" fill="#5B8DB8" stroke="#2D2B2A" stroke-width="1"/>
+        <rect x="8" y="18" width="6" height="20" rx="3" fill="#5B8DB8" stroke="#2D2B2A" stroke-width="1"/>
+      </g>
+      <g transform="translate(400, 118)">
+        <!-- Her -->
+        <circle cx="0" cy="0" r="12" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.5"/>
+        <path d="M-12,-5 Q-15,-18 -5,-18 Q5,-18 8,-12 Q12,-18 15,-10 Q18,-2 12,5 L8,0" fill="#3D3A38" stroke="none"/>
+        <rect x="-10" y="14" width="20" height="35" rx="4" fill="#FFB5C2" stroke="#2D2B2A" stroke-width="1.5"/>
+        <rect x="-14" y="18" width="6" height="20" rx="3" fill="#FFB5C2" stroke="#2D2B2A" stroke-width="1"/>
+        <rect x="8" y="18" width="6" height="20" rx="3" fill="#FFB5C2" stroke="#2D2B2A" stroke-width="1"/>
+      </g>
+      <!-- Hearts (subtle) -->
+      <text x="385" y="105" font-size="14" fill="#E8636F" opacity="0.4">♡</text>
+      <!-- Text overlay -->
+      <text x="240" y="280" text-anchor="middle" font-family="'Noto Sans SC', sans-serif" font-size="12" fill="#8B7355" opacity="0.8">2026年1月 · 高铁45分钟的距离</text>
+    </svg>
+    <div class="panel-caption">
+      上海前端程序员 <b>_星河</b>，通过相亲认识了一个女生。异地，高铁45分钟。每两周回去一次，吃饭、散步、送小礼物。
+    </div>
+  </div>
+
+  <div class="panel fade-in">
+    <div class="dialogue-row">
+      <div class="char-avatar him">
+        <svg viewBox="0 0 40 40" width="40" height="40">
+          <circle cx="20" cy="16" r="10" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.5"/>
+          <rect x="12" y="13" width="16" height="7" rx="2" fill="none" stroke="#2D2B2A" stroke-width="1.2"/>
+          <line x1="12" y1="16" x2="6" y2="16" stroke="#2D2B2A" stroke-width="1.2"/>
+          <line x1="28" y1="16" x2="34" y2="16" stroke="#2D2B2A" stroke-width="1.2"/>
+          <rect x="11" y="28" width="18" height="12" rx="3" fill="#5B8DB8" stroke="#2D2B2A" stroke-width="1.2"/>
+        </svg>
+      </div>
+      <div class="bubble-wrap">
+        <div class="bubble-name" style="color:#5B8DB8">_星河</div>
+        <div class="bubble him">
+          每天就偶尔聊几句，她也不喜欢打视频。我感觉没怎么深入了解过……
+          <span class="thought">聊不起来怎么办……</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER 2: 520奔袭 ==================== -->
+  <div class="chapter fade-in">
+    <span class="chapter-num">贰</span>
+    <span class="chapter-line"></span>
+    <span class="chapter-title">520 奔 袭</span>
+  </div>
+
+  <div class="panel fade-in">
+    <div class="timeline-date">2026年5月20日 下午3:00</div>
+    <svg class="scene-illustration" viewBox="0 0 480 280" xmlns="http://www.w3.org/2000/svg">
+      <!-- Flower shop bg -->
+      <rect width="480" height="280" fill="#FFF5F7"/>
+      <rect x="0" y="180" width="480" height="100" fill="#F5E6D3" opacity="0.5"/>
+      <!-- Flower shop awning -->
+      <path d="M60,80 L420,80 L430,110 L50,110 Z" fill="#E8636F" opacity="0.8"/>
+      <path d="M60,80 L420,80 L425,95 L55,95 Z" fill="#D45560" opacity="0.6"/>
+      <!-- Scalloped edge -->
+      <path d="M50,110 Q70,120 90,110 Q110,120 130,110 Q150,120 170,110 Q190,120 210,110 Q230,120 250,110 Q270,120 290,110 Q310,120 330,110 Q350,120 370,110 Q390,120 410,110 Q430,120 430,110" fill="none" stroke="#D45560" stroke-width="2"/>
+      <!-- Shop sign -->
+      <rect x="180" y="40" width="120" height="35" rx="6" fill="white" stroke="#E8636F" stroke-width="1.5"/>
+      <text x="240" y="63" text-anchor="middle" font-family="'Ma Shan Zheng', cursive" font-size="18" fill="#E8636F">花 · 间</text>
+      <!-- Bouquet in his hands -->
+      <g transform="translate(200, 140)">
+        <!-- Stems -->
+        <line x1="0" y1="0" x2="-10" y2="50" stroke="#4A7C59" stroke-width="2.5"/>
+        <line x1="0" y1="0" x2="5" y2="50" stroke="#4A7C59" stroke-width="2.5"/>
+        <line x1="0" y1="0" x2="15" y2="48" stroke="#4A7C59" stroke-width="2.5"/>
+        <!-- Flowers -->
+        <circle cx="-15" cy="-5" r="12" fill="#E8636F"/>
+        <circle cx="-5" cy="-15" r="10" fill="#FFB5C2"/>
+        <circle cx="10" cy="-10" r="11" fill="#E8636F"/>
+        <circle cx="5" cy="-20" r="9" fill="#FFB5C2"/>
+        <circle cx="-10" cy="-20" r="8" fill="#FF8FA0"/>
+        <!-- Flower details -->
+        <circle cx="-15" cy="-5" r="4" fill="#FFD93D"/>
+        <circle cx="10" cy="-10" r="4" fill="#FFD93D"/>
+        <circle cx="-5" cy="-15" r="3" fill="#FFD93D"/>
+        <!-- Wrapping -->
+        <path d="M-20,35 Q0,30 20,35 L15,55 Q0,50 -15,55 Z" fill="#F5F5F0" stroke="#ddd" stroke-width="1"/>
+        <path d="M-15,55 Q0,48 15,55 L12,65 Q0,60 -12,65 Z" fill="#E8636F" opacity="0.3"/>
+      </g>
+      <!-- Him running with flowers -->
+      <g transform="translate(220, 160)">
+        <circle cx="0" cy="0" r="12" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.5"/>
+        <rect x="-8" y="-4" width="16" height="8" rx="2" fill="none" stroke="#2D2B2A" stroke-width="1.2"/>
+        <line x1="-8" y1="0" x2="-14" y2="0" stroke="#2D2B2A" stroke-width="1.2"/>
+        <line x1="8" y1="0" x2="14" y2="0" stroke="#2D2B2A" stroke-width="1.2"/>
+        <!-- Sweat drops -->
+        <ellipse cx="16" cy="-8" rx="2" ry="3" fill="#A8D8EA" opacity="0.7"/>
+        <ellipse cx="20" cy="-2" rx="1.5" ry="2.5" fill="#A8D8EA" opacity="0.5"/>
+        <!-- Running body -->
+        <rect x="-10" y="14" width="20" height="28" rx="4" fill="#5B8DB8" stroke="#2D2B2A" stroke-width="1.5"/>
+        <!-- Running legs -->
+        <line x1="-5" y1="42" x2="-15" y2="58" stroke="#2D2B2A" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="5" y1="42" x2="18" y2="55" stroke="#2D2B2A" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+      <!-- SFX -->
+      <text x="300" y="145" font-family="'ZCOOL KuaiLe', cursive" font-size="22" fill="#E8636F" transform="rotate(-8, 300, 145)">冲啊！！</text>
+      <!-- Taxi -->
+      <g transform="translate(30, 200)">
+        <rect x="0" y="10" width="80" height="35" rx="8" fill="#FFD93D" stroke="#2D2B2A" stroke-width="1.5"/>
+        <rect x="5" y="5" width="30" height="20" rx="4" fill="#A8D8EA" stroke="#2D2B2A" stroke-width="1"/>
+        <circle cx="20" cy="48" r="8" fill="#3D3A38" stroke="#2D2B2A" stroke-width="1.5"/>
+        <circle cx="60" cy="48" r="8" fill="#3D3A38" stroke="#2D2B2A" stroke-width="1.5"/>
+        <rect x="60" y="15" width="20" height="18" rx="3" fill="#A8D8EA" stroke="#2D2B2A" stroke-width="1"/>
+        <!-- Taxi sign -->
+        <rect x="25" y="-2" width="30" height="10" rx="3" fill="white" stroke="#FFD93D" stroke-width="1"/>
+        <text x="40" y="7" text-anchor="middle" font-size="7" fill="#E8636F" font-weight="bold">TAXI</text>
+      </g>
+      <!-- Speed lines from taxi -->
+      <line x1="110" y1="225" x2="135" y2="225" stroke="#E8636F" stroke-width="1.5" opacity="0.4"/>
+      <line x1="115" y1="235" x2="140" y2="235" stroke="#E8636F" stroke-width="1" opacity="0.3"/>
+      <line x1="110" y1="245" x2="130" y2="245" stroke="#E8636F" stroke-width="1.5" opacity="0.4"/>
+    </svg>
+  </div>
+
+  <div class="panel fade-in">
+    <div class="dialogue-row">
+      <div class="char-avatar him" style="background: var(--warm-soft)">
+        <svg viewBox="0 0 40 40" width="40" height="40">
+          <circle cx="20" cy="16" r="10" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.5"/>
+          <rect x="12" y="13" width="16" height="7" rx="2" fill="none" stroke="#2D2B2A" stroke-width="1.2"/>
+          <line x1="12" y1="16" x2="6" y2="16" stroke="#2D2B2A" stroke-width="1.2"/>
+          <line x1="28" y1="16" x2="34" y2="16" stroke="#2D2B2A" stroke-width="1.2"/>
+          <rect x="11" y="28" width="18" height="12" rx="3" fill="#5B8DB8" stroke="#2D2B2A" stroke-width="1.2"/>
+        </svg>
+      </div>
+      <div class="bubble-wrap">
+        <div class="bubble-name" style="color:#5B8DB8">出租车师傅</div>
+        <div class="bubble him" style="background: var(--warm-soft); border-color: var(--warm);">
+          小伙子，你这是要去见小女友吧？你是从外地赶回来的吧？
+        </div>
+      </div>
+    </div>
+    <div class="inner-thought">woc，师傅您神了……谁还没年轻过。</div>
+  </div>
+
+  <div class="panel dramatic fade-in">
+    <div class="timeline-date">5:40 PM · 她的小区门口</div>
+    <svg class="scene-illustration" viewBox="0 0 480 260" xmlns="http://www.w3.org/2000/svg">
+      <!-- Sunset sky -->
+      <defs>
+        <linearGradient id="sunset" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#FFB347;stop-opacity:0.6" />
+          <stop offset="40%" style="stop-color:#FFD93D;stop-opacity:0.4" />
+          <stop offset="100%" style="stop-color:#A8D8EA;stop-opacity:0.3" />
+        </linearGradient>
+      </defs>
+      <rect width="480" height="260" fill="url(#sunset)"/>
+      <!-- Buildings (apartment complex) -->
+      <rect x="30" y="60" width="60" height="160" rx="2" fill="#E8DDD0" stroke="#C4B5A0" stroke-width="1"/>
+      <rect x="100" y="80" width="50" height="140" rx="2" fill="#D4C8B8" stroke="#C4B5A0" stroke-width="1"/>
+      <rect x="330" y="50" width="70" height="170" rx="2" fill="#E8DDD0" stroke="#C4B5A0" stroke-width="1"/>
+      <rect x="410" y="70" width="50" height="150" rx="2" fill="#D4C8B8" stroke="#C4B5A0" stroke-width="1"/>
+      <!-- Windows -->
+      <g fill="#A8D8EA" opacity="0.6">
+        <rect x="40" y="70" width="10" height="12" rx="1"/><rect x="55" y="70" width="10" height="12" rx="1"/>
+        <rect x="70" y="70" width="10" height="12" rx="1"/><rect x="40" y="90" width="10" height="12" rx="1"/>
+        <rect x="55" y="90" width="10" height="12" rx="1"/><rect x="70" y="90" width="10" height="12" rx="1"/>
+        <rect x="40" y="110" width="10" height="12" rx="1"/><rect x="55" y="110" width="10" height="12" rx="1"/>
+        <rect x="70" y="110" width="10" height="12" rx="1"/>
+        <rect x="340" y="60" width="12" height="14" rx="1"/><rect x="360" y="60" width="12" height="14" rx="1"/>
+        <rect x="380" y="60" width="12" height="14" rx="1"/><rect x="340" y="82" width="12" height="14" rx="1"/>
+        <rect x="360" y="82" width="12" height="14" rx="1"/><rect x="380" y="82" width="12" height="14" rx="1"/>
+      </g>
+      <!-- Gate -->
+      <rect x="180" y="140" width="120" height="80" rx="4" fill="#8B7355" opacity="0.3"/>
+      <rect x="200" y="150" width="80" height="70" rx="3" fill="#6B5B45" opacity="0.4"/>
+      <!-- Him waiting at gate, looking up -->
+      <g transform="translate(220, 170)">
+        <circle cx="0" cy="0" r="11" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.5"/>
+        <rect x="-7" y="-3" width="14" height="7" rx="2" fill="none" stroke="#2D2B2A" stroke-width="1.2"/>
+        <line x1="-7" y1="0" x2="-13" y2="0" stroke="#2D2B2A" stroke-width="1.2"/>
+        <line x1="7" y1="0" x2="13" y2="0" stroke="#2D2B2A" stroke-width="1.2"/>
+        <!-- Smile -->
+        <path d="M-4,4 Q0,8 4,4" fill="none" stroke="#2D2B2A" stroke-width="1" stroke-linecap="round"/>
+        <rect x="-9" y="13" width="18" height="26" rx="4" fill="#5B8DB8" stroke="#2D2B2A" stroke-width="1.5"/>
+        <!-- Holding bouquet behind back -->
+        <circle cx="-18" cy="25" r="8" fill="#E8636F" opacity="0.8"/>
+        <circle cx="-22" cy="20" r="6" fill="#FFB5C2" opacity="0.8"/>
+      </g>
+      <!-- Her walking (in distance) -->
+      <g transform="translate(350, 175)">
+        <circle cx="0" cy="0" r="9" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.2"/>
+        <path d="M-9,-4 Q-12,-14 -4,-14 Q4,-14 6,-9 Q9,-14 12,-8 Q14,-1 9,3" fill="#3D3A38"/>
+        <rect x="-8" y="12" width="16" height="28" rx="3" fill="#FFB5C2" stroke="#2D2B2A" stroke-width="1.2"/>
+      </g>
+      <!-- Dotted gaze line -->
+      <line x1="235" y1="175" x2="340" y2="180" stroke="#E8636F" stroke-width="1" stroke-dasharray="4,4" opacity="0.5"/>
+      <!-- Hearts floating -->
+      <text x="280" y="155" font-size="12" fill="#E8636F" opacity="0.5">♡</text>
+      <text x="300" y="145" font-size="8" fill="#E8636F" opacity="0.3">♡</text>
+      <text x="260" y="150" font-size="10" fill="#E8636F" opacity="0.4">♡</text>
+    </svg>
+  </div>
+
+  <div class="panel fade-in">
+    <div class="dialogue-row">
+      <div class="char-avatar him">
+        <svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="16" r="10" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.5"/><rect x="12" y="13" width="16" height="7" rx="2" fill="none" stroke="#2D2B2A" stroke-width="1.2"/><line x1="12" y1="16" x2="6" y2="16" stroke="#2D2B2A" stroke-width="1.2"/><line x1="28" y1="16" x2="34" y2="16" stroke="#2D2B2A" stroke-width="1.2"/><rect x="11" y="28" width="18" height="12" rx="3" fill="#5B8DB8" stroke="#2D2B2A" stroke-width="1.2"/></svg>
+      </div>
+      <div class="bubble-wrap">
+        <div class="bubble-name" style="color:#5B8DB8">_星河</div>
+        <div class="bubble him">
+          诺，给你——<b>公主请发财</b>
+        </div>
+      </div>
+    </div>
+    <div class="dialogue-row reverse">
+      <div class="char-avatar her">
+        <svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="16" r="10" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.5"/><path d="M8,12 Q5,0 15,0 Q22,0 25,5 Q28,0 32,6 Q35,13 28,18" fill="#3D3A38"/><rect x="11" y="28" width="18" height="12" rx="3" fill="#FFB5C2" stroke="#2D2B2A" stroke-width="1.2"/></svg>
+      </div>
+      <div class="bubble-wrap">
+        <div class="bubble-name" style="color:#E8636F">她</div>
+        <div class="bubble her">
+          怎么想到今天回来的？不是说好周末回的嘛……<br>
+          <b>你太冲动了。</b>
+        </div>
+      </div>
+    </div>
+    <div class="inner-thought">心里一紧……但她说完还是接过了花。</div>
+  </div>
+
+  <!-- ==================== CHAPTER 3: 江边散步 ==================== -->
+  <div class="chapter fade-in">
+    <span class="chapter-num">叁</span>
+    <span class="chapter-line"></span>
+    <span class="chapter-title">江 边 散 步</span>
+  </div>
+
+  <div class="panel rain fade-in">
+    <svg class="scene-illustration" viewBox="0 0 480 260" xmlns="http://www.w3.org/2000/svg">
+      <!-- Night sky -->
+      <defs>
+        <linearGradient id="nightsky" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#2C3E6B;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#4A6FA5;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="480" height="260" fill="url(#nightsky)"/>
+      <!-- Moon -->
+      <circle cx="400" cy="50" r="25" fill="#FFD93D" opacity="0.8"/>
+      <circle cx="390" cy="45" r="22" fill="url(#nightsky)"/>
+      <!-- Stars -->
+      <circle cx="100" cy="30" r="1.5" fill="white" opacity="0.6"/>
+      <circle cx="200" cy="50" r="1" fill="white" opacity="0.4"/>
+      <circle cx="300" cy="25" r="1.5" fill="white" opacity="0.5"/>
+      <circle cx="150" cy="60" r="1" fill="white" opacity="0.3"/>
+      <!-- River -->
+      <rect x="0" y="160" width="480" height="100" fill="#3A5A80" opacity="0.6"/>
+      <!-- River reflections -->
+      <line x1="50" y1="175" x2="120" y2="175" stroke="#FFD93D" stroke-width="1" opacity="0.2"/>
+      <line x1="200" y1="185" x2="280" y2="185" stroke="#FFD93D" stroke-width="0.8" opacity="0.15"/>
+      <line x1="350" y1="170" x2="400" y2="170" stroke="#FFD93D" stroke-width="1" opacity="0.2"/>
+      <!-- Riverbank -->
+      <rect x="0" y="150" width="480" height="15" fill="#4A7C59" opacity="0.4"/>
+      <!-- Walking path -->
+      <rect x="0" y="130" width="480" height="25" fill="#D4C8B8" opacity="0.3"/>
+      <!-- Two figures walking side by side -->
+      <g transform="translate(180, 95)">
+        <!-- Him -->
+        <circle cx="0" cy="0" r="10" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.2"/>
+        <rect x="-7" y="-3" width="14" height="7" rx="2" fill="none" stroke="#2D2B2A" stroke-width="1"/>
+        <line x1="-7" y1="0" x2="-12" y2="0" stroke="#2D2B2A" stroke-width="1"/>
+        <line x1="7" y1="0" x2="12" y2="0" stroke="#2D2B2A" stroke-width="1"/>
+        <rect x="-8" y="12" width="16" height="24" rx="3" fill="#5B8DB8" stroke="#2D2B2A" stroke-width="1.2"/>
+        <!-- Holding umbrella (angled toward her) -->
+        <line x1="8" y1="0" x2="40" y2="-30" stroke="#8B7355" stroke-width="1.5"/>
+        <path d="M20,-35 Q40,-50 60,-35" fill="#A8D8EA" stroke="#6BB7D0" stroke-width="1" opacity="0.7"/>
+      </g>
+      <g transform="translate(230, 97)">
+        <!-- Her -->
+        <circle cx="0" cy="0" r="10" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.2"/>
+        <path d="M-9,-3 Q-12,-13 -4,-13 Q4,-13 6,-8 Q9,-13 12,-7 Q14,0 9,4" fill="#3D3A38"/>
+        <rect x="-8" y="12" width="16" height="28" rx="3" fill="#FFB5C2" stroke="#2D2B2A" stroke-width="1.2"/>
+      </g>
+      <!-- Slight gap between them -->
+      <text x="210" y="108" font-size="10" fill="white" opacity="0.3">···</text>
+      <!-- Boats on river -->
+      <g transform="translate(100, 175)" opacity="0.4">
+        <path d="M0,0 L30,0 L25,10 L5,10 Z" fill="#8B7355"/>
+        <line x1="15" y1="0" x2="15" y2="-15" stroke="#6B5B45" stroke-width="1"/>
+      </g>
+    </svg>
+    <div class="panel-caption">
+      晚风徐徐，两个人沿着江边走。空气有点尴尬，只有一搭没一搭地聊着。
+    </div>
+  </div>
+
+  <div class="panel fade-in">
+    <div class="dialogue-row reverse">
+      <div class="char-avatar her"><svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="16" r="10" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.5"/><path d="M8,12 Q5,0 15,0 Q22,0 25,5 Q28,0 32,6 Q35,13 28,18" fill="#3D3A38"/><rect x="11" y="28" width="18" height="12" rx="3" fill="#FFB5C2" stroke="#2D2B2A" stroke-width="1.2"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name" style="color:#E8636F">她</div>
+        <div class="bubble her">
+          吃饭了吗？
+        </div>
+      </div>
+    </div>
+    <div class="dialogue-row">
+      <div class="char-avatar him"><svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="16" r="10" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.5"/><rect x="12" y="13" width="16" height="7" rx="2" fill="none" stroke="#2D2B2A" stroke-width="1.2"/><line x1="12" y1="16" x2="6" y2="16" stroke="#2D2B2A" stroke-width="1.2"/><line x1="28" y1="16" x2="34" y2="16" stroke="#2D2B2A" stroke-width="1.2"/><rect x="11" y="28" width="18" height="12" rx="3" fill="#5B8DB8" stroke="#2D2B2A" stroke-width="1.2"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name" style="color:#5B8DB8">_星河</div>
+        <div class="bubble him">
+          没。<br>
+          <span class="thought">想和你一起吃的……</span>
+        </div>
+      </div>
+    </div>
+    <div class="dialogue-row reverse">
+      <div class="char-avatar her"><svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="16" r="10" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.5"/><path d="M8,12 Q5,0 15,0 Q22,0 25,5 Q28,0 32,6 Q35,13 28,18" fill="#3D3A38"/><rect x="11" y="28" width="18" height="12" rx="3" fill="#FFB5C2" stroke="#2D2B2A" stroke-width="1.2"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name" style="color:#E8636F">她</div>
+        <div class="bubble her">
+          附近有家霸王茶姬，你不是爱喝嘛，要不去看看？
+        </div>
+      </div>
+    </div>
+    <div class="panel-caption narrator">她付的钱。那一刻，他觉得有戏。</div>
+  </div>
+
+  <!-- ==================== CHAPTER 4: 电影院 ==================== -->
+  <div class="chapter fade-in">
+    <span class="chapter-num">肆</span>
+    <span class="chapter-line"></span>
+    <span class="chapter-title">包 场 电 影</span>
+  </div>
+
+  <div class="panel fade-in">
+    <div class="timeline-date">2026年5月24日 周六下午</div>
+    <svg class="scene-illustration" viewBox="0 0 480 280" xmlns="http://www.w3.org/2000/svg">
+      <!-- Dark theater -->
+      <rect width="480" height="280" fill="#1A1A2E"/>
+      <!-- Screen glow -->
+      <rect x="60" y="20" width="360" height="180" rx="8" fill="#16213E" stroke="#333" stroke-width="2"/>
+      <rect x="70" y="28" width="340" height="164" rx="4" fill="#0F3460"/>
+      <!-- Screen content (abstract star wars) -->
+      <circle cx="240" cy="80" r="30" fill="#FFD93D" opacity="0.3"/>
+      <line x1="180" y1="100" x2="300" y2="100" stroke="#E8636F" stroke-width="3" opacity="0.6"/>
+      <line x1="200" y1="110" x2="280" y2="110" stroke="#E8636F" stroke-width="2" opacity="0.4"/>
+      <text x="240" y="150" text-anchor="middle" font-family="'Noto Sans SC', sans-serif" font-size="14" fill="white" opacity="0.5">STAR WARS</text>
+      <!-- Theater seats -->
+      <g fill="#3D3A38">
+        <rect x="80" y="220" width="40" height="25" rx="5"/>
+        <rect x="130" y="220" width="40" height="25" rx="5"/>
+        <rect x="180" y="220" width="40" height="25" rx="5"/>
+        <rect x="230" y="220" width="40" height="25" rx="5"/>
+        <rect x="280" y="220" width="40" height="25" rx="5"/>
+        <rect x="330" y="220" width="40" height="25" rx="5"/>
+      </g>
+      <!-- Only two people in the theater -->
+      <g transform="translate(200, 210)">
+        <!-- Him -->
+        <circle cx="0" cy="0" r="8" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1"/>
+        <rect x="-6" y="-3" width="12" height="6" rx="1.5" fill="none" stroke="#2D2B2A" stroke-width="1"/>
+        <rect x="-7" y="10" width="14" height="18" rx="3" fill="#5B8DB8" stroke="#2D2B2A" stroke-width="1"/>
+        <!-- Looking sideways at her -->
+        <circle cx="-3" cy="-2" r="1" fill="#2D2B2A"/>
+        <circle cx="3" cy="-2" r="1" fill="#2D2B2A"/>
+      </g>
+      <g transform="translate(260, 212)">
+        <!-- Her, looking at screen -->
+        <circle cx="0" cy="0" r="8" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1"/>
+        <path d="M-7,-3 Q-10,-11 -3,-11 Q3,-11 5,-7 Q7,-11 10,-6 Q12,0 7,3" fill="#3D3A38"/>
+        <rect x="-7" y="10" width="14" height="18" rx="3" fill="#FFB5C2" stroke="#2D2B2A" stroke-width="1"/>
+      </g>
+      <!-- "包场" text -->
+      <text x="240" y="265" text-anchor="middle" font-family="'ZCOOL KuaiLe', cursive" font-size="16" fill="#FFD93D" opacity="0.6">只有两个人的包场</text>
+      <!-- Popcorn -->
+      <g transform="translate(230, 225)">
+        <rect x="0" y="0" width="16" height="20" rx="2" fill="#E8636F" opacity="0.7"/>
+        <circle cx="4" cy="-2" r="4" fill="#FFD93D" opacity="0.6"/>
+        <circle cx="10" cy="-3" r="3.5" fill="#FFD93D" opacity="0.5"/>
+        <circle cx="7" cy="-5" r="3" fill="#FFD93D" opacity="0.6"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="panel fade-in">
+    <div class="dialogue-row reverse">
+      <div class="char-avatar her"><svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="16" r="10" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.5"/><path d="M8,12 Q5,0 15,0 Q22,0 25,5 Q28,0 32,6 Q35,13 28,18" fill="#3D3A38"/><rect x="11" y="28" width="18" height="12" rx="3" fill="#FFB5C2" stroke="#2D2B2A" stroke-width="1.2"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name" style="color:#E8636F">她</div>
+        <div class="bubble her">
+          哇，包场哎！我觉得这种美国大片还挺有意思的，为啥你们都不咋喜欢看？
+        </div>
+      </div>
+    </div>
+    <div class="dialogue-row">
+      <div class="char-avatar him"><svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="16" r="10" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.5"/><rect x="12" y="13" width="16" height="7" rx="2" fill="none" stroke="#2D2B2A" stroke-width="1.2"/><line x1="12" y1="16" x2="6" y2="16" stroke="#2D2B2A" stroke-width="1.2"/><line x1="28" y1="16" x2="34" y2="16" stroke="#2D2B2A" stroke-width="1.2"/><rect x="11" y="28" width="18" height="12" rx="3" fill="#5B8DB8" stroke="#2D2B2A" stroke-width="1.2"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name" style="color:#5B8DB8">_星河</div>
+        <div class="bubble him">
+          剧情都差不多，个人英雄主义嘛。当视觉盛宴看就好了。
+        </div>
+      </div>
+    </div>
+    <div class="panel-caption narrator">他用余光偷瞟她，看她看得很认真，就没过多打扰。</div>
+  </div>
+
+  <!-- ==================== CHAPTER 5: 亭子摊牌 ==================== -->
+  <div class="chapter fade-in">
+    <span class="chapter-num">伍</span>
+    <span class="chapter-line"></span>
+    <span class="chapter-title">亭 子 摊 牌</span>
+  </div>
+
+  <div class="panel dramatic fade-in">
+    <div class="timeline-date">看完电影 · 江边的亭子</div>
+    <svg class="scene-illustration" viewBox="0 0 480 280" xmlns="http://www.w3.org/2000/svg">
+      <!-- Rainy atmosphere -->
+      <defs>
+        <linearGradient id="rain" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#6B8CAE;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#A8C4D8;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="480" height="280" fill="url(#rain)"/>
+      <!-- Rain drops -->
+      <g stroke="#A8D8EA" stroke-width="1" opacity="0.4">
+        <line x1="50" y1="0" x2="45" y2="30"/><line x1="120" y1="10" x2="115" y2="40"/>
+        <line x1="200" y1="5" x2="195" y2="35"/><line x1="280" y1="15" x2="275" y2="45"/>
+        <line x1="350" y1="0" x2="345" y2="30"/><line x1="420" y1="10" x2="415" y2="40"/>
+        <line x1="80" y1="50" x2="75" y2="80"/><line x1="160" y1="45" x2="155" y2="75"/>
+        <line x1="240" y1="55" x2="235" y2="85"/><line x1="320" y1="40" x2="315" y2="70"/>
+        <line x1="400" y1="50" x2="395" y2="80"/><line x1="460" y1="30" x2="455" y2="60"/>
+      </g>
+      <!-- Pavilion -->
+      <g transform="translate(140, 60)">
+        <!-- Roof -->
+        <path d="M0,40 L100,0 L200,40 L190,45 L10,45 Z" fill="#8B7355" stroke="#6B5B45" stroke-width="1.5"/>
+        <path d="M10,45 L100,8 L190,45" fill="#A0896B" stroke="none"/>
+        <!-- Pillars -->
+        <rect x="20" y="40" width="6" height="100" fill="#C4B5A0" stroke="#8B7355" stroke-width="1"/>
+        <rect x="174" y="40" width="6" height="100" fill="#C4B5A0" stroke="#8B7355" stroke-width="1"/>
+        <!-- Bench -->
+        <rect x="30" y="110" width="140" height="8" rx="2" fill="#A0896B" stroke="#8B7355" stroke-width="1"/>
+        <rect x="35" y="118" width="4" height="20" fill="#8B7355"/>
+        <rect x="161" y="118" width="4" height="20" fill="#8B7355"/>
+        <!-- Two people sitting on bench -->
+        <g transform="translate(60, 75)">
+          <!-- Him -->
+          <circle cx="0" cy="0" r="9" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.2"/>
+          <rect x="-6" y="-3" width="12" height="6" rx="1.5" fill="none" stroke="#2D2B2A" stroke-width="1"/>
+          <line x1="-6" y1="0" x2="-11" y2="0" stroke="#2D2B2A" stroke-width="1"/>
+          <line x1="6" y1="0" x2="11" y2="0" stroke="#2D2B2A" stroke-width="1"/>
+          <rect x="-7" y="10" width="14" height="22" rx="3" fill="#5B8DB8" stroke="#2D2B2A" stroke-width="1.2"/>
+          <!-- Hand reaching out -->
+          <line x1="10" y1="18" x2="25" y2="22" stroke="#FFE0C2" stroke-width="3" stroke-linecap="round"/>
+        </g>
+        <g transform="translate(120, 77)">
+          <!-- Her -->
+          <circle cx="0" cy="0" r="9" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.2"/>
+          <path d="M-8,-3 Q-10,-12 -3,-12 Q3,-12 5,-7 Q7,-12 10,-6 Q12,0 7,3" fill="#3D3A38"/>
+          <rect x="-7" y="10" width="14" height="24" rx="3" fill="#FFB5C2" stroke="#2D2B2A" stroke-width="1.2"/>
+          <!-- Slightly turned away -->
+        </g>
+      </g>
+      <!-- Ground / puddles -->
+      <rect x="0" y="180" width="480" height="100" fill="#6B8B6B" opacity="0.3"/>
+      <ellipse cx="200" cy="220" rx="40" ry="8" fill="#A8D8EA" opacity="0.2"/>
+      <ellipse cx="350" cy="240" rx="30" ry="6" fill="#A8D8EA" opacity="0.15"/>
+    </svg>
+  </div>
+
+  <div class="panel dramatic fade-in">
+    <div class="dialogue-row">
+      <div class="char-avatar him"><svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="16" r="10" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.5"/><rect x="12" y="13" width="16" height="7" rx="2" fill="none" stroke="#2D2B2A" stroke-width="1.2"/><line x1="12" y1="16" x2="6" y2="16" stroke="#2D2B2A" stroke-width="1.2"/><line x1="28" y1="16" x2="34" y2="16" stroke="#2D2B2A" stroke-width="1.2"/><rect x="11" y="28" width="18" height="12" rx="3" fill="#5B8DB8" stroke="#2D2B2A" stroke-width="1.2"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name" style="color:#5B8DB8">_星河</div>
+        <div class="bubble him">
+          我觉得我们聊天每天都是一些没什么营养的话……相处有一段时间了，你觉得我这个人怎么样？
+        </div>
+      </div>
+    </div>
+    <div class="dialogue-row reverse">
+      <div class="char-avatar her"><svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="16" r="10" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.5"/><path d="M8,12 Q5,0 15,0 Q22,0 25,5 Q28,0 32,6 Q35,13 28,18" fill="#3D3A38"/><rect x="11" y="28" width="18" height="12" rx="3" fill="#FFB5C2" stroke="#2D2B2A" stroke-width="1.2"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name" style="color:#E8636F">她</div>
+        <div class="bubble her" style="border-color: #E8636F; background: #FFF0F2;">
+          ……<br>
+          <b style="font-size: 15px; color: #E8636F;">我不喜欢你。</b>
+        </div>
+      </div>
+    </div>
+    <div class="inner-thought">终于要来了吗……</div>
+  </div>
+
+  <div class="panel romantic fade-in">
+    <div class="dialogue-row">
+      <div class="char-avatar him"><svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="16" r="10" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.5"/><rect x="12" y="13" width="16" height="7" rx="2" fill="none" stroke="#2D2B2A" stroke-width="1.2"/><line x1="12" y1="16" x2="6" y2="16" stroke="#2D2B2A" stroke-width="1.2"/><line x1="28" y1="16" x2="34" y2="16" stroke="#2D2B2A" stroke-width="1.2"/><rect x="11" y="28" width="18" height="12" rx="3" fill="#5B8DB8" stroke="#2D2B2A" stroke-width="1.2"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name" style="color:#5B8DB8">_星河</div>
+        <div class="bubble him">
+          我知道。那你还坚持吗？
+        </div>
+      </div>
+    </div>
+    <div class="dialogue-row reverse">
+      <div class="char-avatar her"><svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="16" r="10" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.5"/><path d="M8,12 Q5,0 15,0 Q22,0 25,5 Q28,0 32,6 Q35,13 28,18" fill="#3D3A38"/><rect x="11" y="28" width="18" height="12" rx="3" fill="#FFB5C2" stroke="#2D2B2A" stroke-width="1.2"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name" style="color:#E8636F">她</div>
+        <div class="bubble her">
+          我其实不太会谈恋爱，也不知道怎么去喜欢上一个人……<br>
+          但是你又为我做了这么多，从新年礼物、生日礼物、到女神节礼物……<br>
+          <b>你挺好的，真的。</b>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel romantic fade-in">
+    <svg class="scene-illustration" viewBox="0 0 480 240" xmlns="http://www.w3.org/2000/svg">
+      <rect width="480" height="240" fill="#FFF5F7"/>
+      <!-- Close-up of hands -->
+      <g transform="translate(140, 60)">
+        <!-- His hand reaching -->
+        <path d="M80,80 Q90,70 100,75 Q110,80 115,90 Q112,95 105,95 Q98,95 95,90 Q92,85 88,82 Z" fill="#FFE0C2" stroke="#D4B896" stroke-width="1.5"/>
+        <path d="M100,75 Q108,68 118,72 Q125,78 122,88" fill="#FFE0C2" stroke="#D4B896" stroke-width="1.5"/>
+        <!-- Her hand (slightly pulled back) -->
+        <path d="M200,70 Q210,62 220,68 Q228,75 225,85 Q220,90 212,88 Q205,85 202,78 Z" fill="#FFE0D0" stroke="#D4B896" stroke-width="1.5"/>
+        <!-- Sparkle between hands -->
+        <text x="160" y="75" font-size="16" fill="#FFD93D" opacity="0.6">✦</text>
+        <text x="170" y="65" font-size="10" fill="#E8636F" opacity="0.4">♡</text>
+      </g>
+      <!-- SFX -->
+      <text x="240" y="180" text-anchor="middle" font-family="'Ma Shan Zheng', cursive" font-size="28" fill="#E8636F" opacity="0.3">可以不</text>
+      <!-- Sweat drop detail -->
+      <g transform="translate(170, 100)">
+        <ellipse cx="0" cy="0" rx="3" ry="5" fill="#A8D8EA" opacity="0.5"/>
+        <text x="10" y="5" font-size="10" fill="#8B7355" opacity="0.5">手心有汗…</text>
+      </g>
+    </svg>
+    <div class="panel-caption">
+      他伸出手：「可以不？」<br>
+      她犹豫了一下，让他牵了。过了一会儿，她挣脱了——<br>
+      <b>「你手心有汗，握着不舒服。」</b><br>
+      他笑了笑：「我一紧张就这样。」
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER 6: 和解 ==================== -->
+  <div class="chapter fade-in">
+    <span class="chapter-num">陆</span>
+    <span class="chapter-line"></span>
+    <span class="chapter-title">和 解</span>
+  </div>
+
+  <div class="panel fade-in">
+    <div class="dialogue-row reverse">
+      <div class="char-avatar her"><svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="16" r="10" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.5"/><path d="M8,12 Q5,0 15,0 Q22,0 25,5 Q28,0 32,6 Q35,13 28,18" fill="#3D3A38"/><rect x="11" y="28" width="18" height="12" rx="3" fill="#FFB5C2" stroke="#2D2B2A" stroke-width="1.2"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name" style="color:#E8636F">她</div>
+        <div class="bubble her">
+          我今天讲这么多，其实是把球传给了你。<br>
+          <b>你要是想继续，我就继续；你要是不想继续，那就各不联系了。</b><br>
+          所以你怎么想的？
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel fade-in">
+    <div class="dialogue-row reverse">
+      <div class="char-avatar her"><svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="16" r="10" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.5"/><path d="M8,12 Q5,0 15,0 Q22,0 25,5 Q28,0 32,6 Q35,13 28,18" fill="#3D3A38"/><rect x="11" y="28" width="18" height="12" rx="3" fill="#FFB5C2" stroke="#2D2B2A" stroke-width="1.2"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name" style="color:#E8636F">她（列举他的优点）</div>
+        <div class="bubble her">
+          你不会pua我，很多时候也会尊重我的想法。外形也看得过去，工作也还好，性格也还可以，<b>还有不抽烟</b>。
+        </div>
+      </div>
+    </div>
+    <div class="dialogue-row">
+      <div class="char-avatar him"><svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="16" r="10" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.5"/><rect x="12" y="13" width="16" height="7" rx="2" fill="none" stroke="#2D2B2A" stroke-width="1.2"/><line x1="12" y1="16" x2="6" y2="16" stroke="#2D2B2A" stroke-width="1.2"/><line x1="28" y1="16" x2="34" y2="16" stroke="#2D2B2A" stroke-width="1.2"/><rect x="11" y="28" width="18" height="12" rx="3" fill="#5B8DB8" stroke="#2D2B2A" stroke-width="1.2"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name" style="color:#5B8DB8">_星河</div>
+        <div class="bubble him">
+          相遇即是缘分。我不会去攀援，但我会惜缘。<br>
+          <b>我想继续试试。</b>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phone stand incident -->
+  <div class="panel fade-in">
+    <div class="panel-caption" style="text-align:center; font-size: 12px; color: var(--ink-light); border: none; background: var(--warm-soft); padding: 12px;">
+      ⚠ 翻旧账环节 · 手机支架事件
+    </div>
+    <div class="dialogue-row reverse">
+      <div class="char-avatar her"><svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="16" r="10" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.5"/><path d="M8,12 Q5,0 15,0 Q22,0 25,5 Q28,0 32,6 Q35,13 28,18" fill="#3D3A38"/><rect x="11" y="28" width="18" height="12" rx="3" fill="#FFB5C2" stroke="#2D2B2A" stroke-width="1.2"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name" style="color:#E8636F">她</div>
+        <div class="bubble her">
+          你还记不记得我五一送你的东西？你收到怎么说的？
+        </div>
+      </div>
+    </div>
+    <div class="dialogue-row">
+      <div class="char-avatar him"><svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="16" r="10" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.5"/><rect x="12" y="13" width="16" height="7" rx="2" fill="none" stroke="#2D2B2A" stroke-width="1.2"/><line x1="12" y1="16" x2="6" y2="16" stroke="#2D2B2A" stroke-width="1.2"/><line x1="28" y1="16" x2="34" y2="16" stroke="#2D2B2A" stroke-width="1.2"/><rect x="11" y="28" width="18" height="12" rx="3" fill="#5B8DB8" stroke="#2D2B2A" stroke-width="1.2"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name" style="color:#5B8DB8">_星河</div>
+        <div class="bubble him">
+          记得啊，那个手机支架嘛。我说——<br>
+          <s style="color: #E8636F;">「这种2元店很多吧」</s>
+        </div>
+      </div>
+    </div>
+    <div class="dialogue-row reverse">
+      <div class="char-avatar her"><svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="16" r="10" fill="#FFE0C2" stroke="#2D2B2A" stroke-width="1.5"/><path d="M8,12 Q5,0 15,0 Q22,0 25,5 Q28,0 32,6 Q35,13 28,18" fill="#3D3A38"/><rect x="11" y="28" width="18" height="12" rx="3" fill="#FFB5C2" stroke="#2D2B2A" stroke-width="1.2"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name" style="color:#E8636F">她</div>
+        <div class="bubble her" style="background: #FFE0E6; border-color: #E8636F;">
+          <b>去死吧。</b>这可是我上次去洛阳旅游专门买的！多可爱啊！我弟想要我都没给！
+        </div>
+      </div>
+    </div>
+    <div class="panel-caption narrator">他保证以后不会了。她说："改变是很难的。" 但还是选择再给他一次机会。</div>
+  </div>
+
+  <!-- Final hand-holding -->
+  <div class="panel romantic fade-in">
+    <svg class="scene-illustration" viewBox="0 0 480 220" xmlns="http://www.w3.org/2000/svg">
+      <rect width="480" height="220" fill="#FFF5F7"/>
+      <!-- Warm glow -->
+      <circle cx="240" cy="110" r="100" fill="#FFD93D" opacity="0.08"/>
+      <circle cx="240" cy="110" r="60" fill="#FFD93D" opacity="0.06"/>
+      <!-- Hands finally holding -->
+      <g transform="translate(150, 70)">
+        <!-- His hand -->
+        <path d="M60,60 Q70,50 80,55 Q90,60 95,70 Q92,78 85,78 Q78,78 75,72 Q72,66 68,62 Z" fill="#FFE0C2" stroke="#D4B896" stroke-width="1.5"/>
+        <path d="M80,55 Q88,48 98,52 Q105,58 102,68" fill="#FFE0C2" stroke="#D4B896" stroke-width="1.5"/>
+        <!-- Her hand -->
+        <path d="M120,55 Q130,47 140,52 Q148,59 145,69 Q140,75 132,73 Q125,70 122,63 Z" fill="#FFE0D0" stroke="#D4B896" stroke-width="1.5"/>
+        <!-- Fingers intertwined -->
+        <path d="M95,70 Q105,65 115,68 Q120,72 118,78" fill="none" stroke="#D4B896" stroke-width="2" opacity="0.6"/>
+        <!-- Sparkles -->
+        <text x="100" y="50" font-size="14" fill="#FFD93D">✦</text>
+        <text x="85" y="42" font-size="10" fill="#E8636F" opacity="0.6">♡</text>
+        <text x="125" y="45" font-size="12" fill="#FFD93D" opacity="0.5">✦</text>
+        <text x="110" y="38" font-size="8" fill="#E8636F" opacity="0.4">♡</text>
+      </g>
+      <!-- Confirmed text -->
+      <text x="240" y="180" text-anchor="middle" font-family="'Ma Shan Zheng', cursive" font-size="22" fill="#E8636F" opacity="0.5">以后的路一起走吧</text>
+      <text x="240" y="205" text-anchor="middle" font-family="'Noto Sans SC', sans-serif" font-size="11" fill="#8B7355" opacity="0.6">这次，她没有挣脱。</text>
+    </svg>
+  </div>
+
+  <!-- ==================== ENDING ==================== -->
+  <div class="chapter fade-in">
+    <span class="chapter-num">终</span>
+    <span class="chapter-line"></span>
+    <span class="chapter-title">相 遇 即 是 缘 分</span>
+  </div>
+
+  <div class="panel fade-in" style="text-align: center; padding: 30px 20px;">
+    <svg viewBox="0 0 200 60" width="180" style="margin: 0 auto 16px; display: block;">
+      <text x="100" y="40" text-anchor="middle" font-family="'Ma Shan Zheng', cursive" font-size="28" fill="#E8636F">白头到老</text>
+    </svg>
+    <p style="font-size: 13px; color: var(--ink-light); line-height: 1.8;">
+      她：那以后……<br>
+      他：以后一起白头到老啊。<br>
+      她：白头。
+    </p>
+  </div>
+
+  <!-- ===== FENG GE QUOTE ===== -->
+  <div class="feng-ge-quote fade-in">
+    <div class="quote-icon">"</div>
+    <p>
+      这老哥是个典型的<b>力工型选手</b>，但属于力工里面比较有救的那种。<br><br>
+      你看他的行动力——下午3点请假、买花、坐高铁、堵车、狂奔。很多人连这一步都迈不出去，天天在那"我该不该主动"，脑子里想了一万遍，腿一步没动。<br><br>
+      她说"我不喜欢你"的时候，他没有崩溃。他说"我知道"，然后继续聊。大部分人听到这句话，要么当场黑脸走人，要么回去发朋友圈"终究是错付了"。<br><br>
+      问题在哪？<b>不会聊天</b>。"这种2元店很多吧"——人家专门从洛阳给你带的，你来这么一句？<br><br>
+      但他说了句话说得挺好——<b>"一个人孤单总比两个人彼此消耗要好"</b>。说明他是有思考的。<br><br>
+      想连接了。
+    </p>
+    <div class="attribution">—— 峰哥亡命天涯视角</div>
+  </div>
+
+  <!-- ===== END CARD ===== -->
+  <div class="end-card fade-in">
+    <div class="end-text">全 剧 终</div>
+    <div class="end-sub">故事来源：掘金用户 _星河 的沸点记录<br>漫画改编：峰哥亡命天涯视角</div>
+  </div>
+
+</div>
+
+<!-- Status bar -->
+<div class="status-bar">
+  相亲记录 · _星河的故事 · 漫画版
+</div>
+
+<script>
+  // Scroll-triggered fade-in animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
