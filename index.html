@@ -39,7 +39,7 @@
   .comic-container {
     max-width: 480px;
     margin: 0 auto;
-    padding: 0 12px 60px;
+    padding: 0 12px 80px;
     position: relative;
   }
 
@@ -342,80 +342,6 @@
     border-radius: 50%;
   }
 
-  /* ===== VISITOR STATS ===== */
-  .visitor-stats {
-    margin: 24px 0 16px;
-    padding: 20px;
-    background: linear-gradient(135deg, #2D2B2A 0%, #3D3A38 100%);
-    border-radius: 12px;
-    color: #F5E6D3;
-    position: relative;
-    overflow: hidden;
-  }
-  .visitor-stats::before {
-    content: '';
-    position: absolute;
-    top: -30px; left: -30px;
-    width: 120px; height: 120px;
-    background: radial-gradient(circle, rgba(168,216,234,0.1), transparent);
-    border-radius: 50%;
-  }
-  .visitor-stats::after {
-    content: '';
-    position: absolute;
-    bottom: -20px; right: -20px;
-    width: 80px; height: 80px;
-    background: radial-gradient(circle, rgba(232,99,111,0.1), transparent);
-    border-radius: 50%;
-  }
-  .stats-title {
-    font-family: 'ZCOOL KuaiLe', cursive;
-    font-size: 14px;
-    color: rgba(245,230,211,0.7);
-    letter-spacing: 2px;
-    margin-bottom: 16px;
-    position: relative;
-    z-index: 1;
-  }
-  .stats-grid {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    position: relative;
-    z-index: 1;
-  }
-  .stat-item {
-    text-align: center;
-    min-width: 80px;
-  }
-  .stat-number {
-    font-family: 'Ma Shan Zheng', cursive;
-    font-size: 32px;
-    color: #FFD93D;
-    line-height: 1.2;
-    text-shadow: 0 2px 8px rgba(255,217,61,0.2);
-  }
-  .stat-label {
-    font-size: 11px;
-    color: rgba(245,230,211,0.5);
-    margin-top: 4px;
-    letter-spacing: 1px;
-  }
-  .stat-divider {
-    width: 1px;
-    height: 40px;
-    background: rgba(245,230,211,0.15);
-  }
-  .stats-footer {
-    font-size: 10px;
-    color: rgba(245,230,211,0.35);
-    text-align: center;
-    margin-top: 12px;
-    position: relative;
-    z-index: 1;
-  }
-
   /* Status bar at bottom */
   .status-bar {
     position: fixed;
@@ -430,6 +356,13 @@
     color: var(--ink-light);
     z-index: 100;
     font-family: 'Noto Sans SC', sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .status-bar b {
+    color: var(--accent);
+    font-weight: 600;
   }
 </style>
 </head>
@@ -1203,41 +1136,14 @@
 
 <!-- Status bar -->
 <div class="status-bar">
-  相亲记录 · _星河的故事 · 漫画版
+  相亲记录 · _星河的故事 · 漫画版 &nbsp;|&nbsp;
+  累计 <b id="stat-total">-</b> ·
+  今日 <b id="stat-today">-</b> ·
+  昨日 <b id="stat-yesterday">-</b>
 </div>
 
-<!-- ===== VISITOR STATS ===== -->
-<div class="visitor-stats fade-in" id="visitor-stats" style="max-width: 480px; margin: 0 auto 20px; padding: 0 12px;">
-  <div style="background: linear-gradient(135deg, #2D2B2A 0%, #3D3A38 100%); border-radius: 12px; padding: 20px; position: relative; overflow: hidden;">
-    <div style="position:absolute;top:-30px;left:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(168,216,234,0.1),transparent);border-radius:50%;"></div>
-    <div style="position:absolute;bottom:-20px;right:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(232,99,111,0.1),transparent);border-radius:50%;"></div>
-    <div style="font-family:'ZCOOL KuaiLe',cursive;font-size:14px;color:rgba(245,230,211,0.7);letter-spacing:2px;margin-bottom:16px;position:relative;z-index:1;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;">
-        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-        <circle cx="12" cy="12" r="3"/>
-      </svg>
-      访问统计
-    </div>
-    <div style="display:flex;align-items:center;justify-content:center;gap:20px;position:relative;z-index:1;">
-      <div style="text-align:center;min-width:80px;">
-        <div class="stat-number" id="stat-total" style="font-family:'Ma Shan Zheng',cursive;font-size:32px;color:#FFD93D;line-height:1.2;">--</div>
-        <div style="font-size:11px;color:rgba(245,230,211,0.5);margin-top:4px;letter-spacing:1px;">累计访问</div>
-      </div>
-      <div style="width:1px;height:40px;background:rgba(245,230,211,0.15);"></div>
-      <div style="text-align:center;min-width:80px;">
-        <div class="stat-number" id="stat-today" style="font-family:'Ma Shan Zheng',cursive;font-size:32px;color:#FFD93D;line-height:1.2;">--</div>
-        <div style="font-size:11px;color:rgba(245,230,211,0.5);margin-top:4px;letter-spacing:1px;">今日访问</div>
-      </div>
-      <div style="width:1px;height:40px;background:rgba(245,230,211,0.15);"></div>
-      <div style="text-align:center;min-width:80px;">
-        <div class="stat-number" id="stat-yesterday" style="font-family:'Ma Shan Zheng',cursive;font-size:32px;color:#FFD93D;line-height:1.2;">--</div>
-        <div style="font-size:11px;color:rgba(245,230,211,0.5);margin-top:4px;letter-spacing:1px;">昨日访问</div>
-      </div>
-    </div>
-    <div id="stats-time" style="font-size:10px;color:rgba(245,230,211,0.35);text-align:center;margin-top:12px;position:relative;z-index:1;">实时监控中...</div>
-  </div>
-</div>
-
+<script data-goatcounter="https://ilysusu.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 <script>
   // Scroll-triggered fade-in animations
   const observer = new IntersectionObserver((entries) => {
@@ -1249,58 +1155,31 @@
   }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-  // Visitor counter using countapi.xyz
-  (function() {
-    const NS = 'blind-date-comic.ilysusu.github.io';
+  // Fetch visitor stats from GoatCounter public API
+  (async function() {
+    try {
+      const r = await fetch('https://ilysusu.goatcounter.com/counter/*.json');
+      if (r.ok) {
+        const d = await r.json();
+        document.getElementById('stat-total').textContent = Number(d.count).toLocaleString();
+      }
+    } catch {}
+
+    // Today + yesterday from localStorage
+    const KEY = 'bd_comic_visits';
     const today = new Date().toISOString().slice(0, 10);
     const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-
-    async function hit(key) {
-      try {
-        const r = await fetch(`https://api.countapi.xyz/hit/${NS}/${key}`);
-        return await r.json();
-      } catch { return null; }
+    let data;
+    try { data = JSON.parse(localStorage.getItem(KEY)); } catch {}
+    if (!data || typeof data !== 'object') data = { daily: {} };
+    data.daily[today] = (data.daily[today] || 0) + 1;
+    const cutoff = new Date(Date.now() - 7 * 86400000).toISOString().slice(0, 10);
+    for (const k of Object.keys(data.daily)) {
+      if (k < cutoff) delete data.daily[k];
     }
-
-    async function get(key) {
-      try {
-        const r = await fetch(`https://api.countapi.xyz/get/${NS}/${key}`);
-        return await r.json();
-      } catch { return null; }
-    }
-
-    async function init() {
-      // Increment total + today counters
-      const [totalRes, todayRes] = await Promise.all([
-        hit('total'),
-        hit('today-' + today)
-      ]);
-      // Read yesterday's (don't increment)
-      const yesterdayRes = await get('yesterday-' + yesterday);
-
-      if (totalRes) document.getElementById('stat-total').textContent = totalRes.value.toLocaleString();
-      if (todayRes) document.getElementById('stat-today').textContent = todayRes.value.toLocaleString();
-      if (yesterdayRes) document.getElementById('stat-yesterday').textContent = yesterdayRes.value.toLocaleString();
-
-      // Update time
-      const now = new Date();
-      document.getElementById('stats-time').textContent =
-        '最后更新：' + now.toLocaleString('zh-CN', { hour12: false });
-    }
-
-    init();
-    // Refresh every 30s
-    setInterval(async () => {
-      const [totalRes, todayRes, yesterdayRes] = await Promise.all([
-        get('total'), get('today-' + today), get('yesterday-' + yesterday)
-      ]);
-      if (totalRes) document.getElementById('stat-total').textContent = totalRes.value.toLocaleString();
-      if (todayRes) document.getElementById('stat-today').textContent = todayRes.value.toLocaleString();
-      if (yesterdayRes) document.getElementById('stat-yesterday').textContent = yesterdayRes.value.toLocaleString();
-      const now = new Date();
-      document.getElementById('stats-time').textContent =
-        '最后更新：' + now.toLocaleString('zh-CN', { hour12: false });
-    }, 30000);
+    localStorage.setItem(KEY, JSON.stringify(data));
+    document.getElementById('stat-today').textContent = (data.daily[today] || 0).toLocaleString();
+    document.getElementById('stat-yesterday').textContent = (data.daily[yesterday] || 0).toLocaleString();
   })();
 </script>
 
