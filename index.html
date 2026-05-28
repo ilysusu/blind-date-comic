@@ -27,6 +27,7 @@
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
 
   body {
     background: var(--bg);
@@ -364,6 +365,62 @@
     color: var(--accent);
     font-weight: 600;
   }
+
+  /* ===== TABLE OF CONTENTS ===== */
+  .toc {
+    background: var(--panel-bg);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 0 4px 24px;
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.06);
+  }
+  .toc-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 20px;
+    color: var(--accent);
+    text-align: center;
+    margin-bottom: 14px;
+    letter-spacing: 4px;
+  }
+  .toc-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 16px;
+  }
+  .toc-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 13.5px;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .toc-item:hover {
+    background: var(--pink-soft);
+    transform: translateX(4px);
+  }
+  .toc-num {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 18px;
+    color: var(--accent);
+    flex-shrink: 0;
+    width: 22px;
+    text-align: center;
+  }
+  .toc-label {
+    font-family: 'ZCOOL KuaiLe', cursive;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+  .toc-item:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    justify-self: center;
+  }
 </style>
 </head>
 <body>
@@ -377,8 +434,22 @@
     <div class="deco-line"></div>
   </div>
 
+  <!-- TABLE OF CONTENTS -->
+  <div class="toc fade-in">
+    <div class="toc-title">目 录</div>
+    <ul class="toc-list">
+      <li><a class="toc-item" href="#ch1"><span class="toc-num">壹</span><span class="toc-label">初 识</span></a></li>
+      <li><a class="toc-item" href="#ch2"><span class="toc-num">贰</span><span class="toc-label">520 奔袭</span></a></li>
+      <li><a class="toc-item" href="#ch3"><span class="toc-num">叁</span><span class="toc-label">江边散步</span></a></li>
+      <li><a class="toc-item" href="#ch4"><span class="toc-num">肆</span><span class="toc-label">包场电影</span></a></li>
+      <li><a class="toc-item" href="#ch5"><span class="toc-num">伍</span><span class="toc-label">亭子摊牌</span></a></li>
+      <li><a class="toc-item" href="#ch6"><span class="toc-num">陆</span><span class="toc-label">和 解</span></a></li>
+      <li><a class="toc-item" href="#ch7"><span class="toc-num">柒</span><span class="toc-label">冰棍与未来</span></a></li>
+    </ul>
+  </div>
+
   <!-- ==================== CHAPTER 1: 初识 ==================== -->
-  <div class="chapter fade-in">
+  <div id="ch1" class="chapter fade-in">
     <span class="chapter-num">壹</span>
     <span class="chapter-line"></span>
     <span class="chapter-title">初 识</span>
@@ -487,7 +558,7 @@
   </div>
 
   <!-- ==================== CHAPTER 2: 520奔袭 ==================== -->
-  <div class="chapter fade-in">
+  <div id="ch2" class="chapter fade-in">
     <span class="chapter-num">贰</span>
     <span class="chapter-line"></span>
     <span class="chapter-title">520 奔 袭</span>
@@ -670,7 +741,7 @@
   </div>
 
   <!-- ==================== CHAPTER 3: 江边散步 ==================== -->
-  <div class="chapter fade-in">
+  <div id="ch3" class="chapter fade-in">
     <span class="chapter-num">叁</span>
     <span class="chapter-line"></span>
     <span class="chapter-title">江 边 散 步</span>
@@ -768,7 +839,7 @@
   </div>
 
   <!-- ==================== CHAPTER 4: 电影院 ==================== -->
-  <div class="chapter fade-in">
+  <div id="ch4" class="chapter fade-in">
     <span class="chapter-num">肆</span>
     <span class="chapter-line"></span>
     <span class="chapter-title">包 场 电 影</span>
@@ -847,7 +918,7 @@
   </div>
 
   <!-- ==================== CHAPTER 5: 亭子摊牌 ==================== -->
-  <div class="chapter fade-in">
+  <div id="ch5" class="chapter fade-in">
     <span class="chapter-num">伍</span>
     <span class="chapter-line"></span>
     <span class="chapter-title">亭 子 摊 牌</span>
@@ -988,7 +1059,7 @@
   </div>
 
   <!-- ==================== CHAPTER 6: 和解 ==================== -->
-  <div class="chapter fade-in">
+  <div id="ch6" class="chapter fade-in">
     <span class="chapter-num">陆</span>
     <span class="chapter-line"></span>
     <span class="chapter-title">和 解</span>
@@ -1106,7 +1177,7 @@
   </div>
 
   <!-- ==================== CHAPTER 7: 冰棍与未来 ==================== -->
-  <div class="chapter fade-in">
+  <div id="ch7" class="chapter fade-in">
     <span class="chapter-num">柒</span>
     <span class="chapter-line"></span>
     <span class="chapter-title">冰 棍 与 未 来</span>
