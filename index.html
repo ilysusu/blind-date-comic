@@ -1561,17 +1561,37 @@
 
   // Sidebar TOC: active chapter tracking
   const tocItems = document.querySelectorAll('.toc-tree-item');
+  const tocLinks = document.querySelectorAll('.toc-tree-link');
   const chapters = document.querySelectorAll('[id^="ch"].chapter');
+
+  function setActiveChapter(id) {
+    tocItems.forEach(item => {
+      item.classList.toggle('active', item.querySelector('a').getAttribute('href') === '#' + id);
+    });
+  }
+
+  // Click handler: immediately highlight
+  tocLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      setActiveChapter(link.getAttribute('href').slice(1));
+    });
+  });
+
+  // Also handle inline TOC clicks
+  document.querySelectorAll('.toc-item').forEach(link => {
+    link.addEventListener('click', () => {
+      setActiveChapter(link.getAttribute('href').slice(1));
+    });
+  });
+
+  // IntersectionObserver for scroll-based tracking
   const chapObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        const id = entry.target.id;
-        tocItems.forEach(item => {
-          item.classList.toggle('active', item.querySelector('a').getAttribute('href') === '#' + id);
-        });
+        setActiveChapter(entry.target.id);
       }
     });
-  }, { threshold: 0.3, rootMargin: '-20% 0px -60% 0px' });
+  }, { threshold: 0.1, rootMargin: '-10% 0px -70% 0px' });
   chapters.forEach(ch => chapObserver.observe(ch));
 
   // Scroll to top button
