@@ -1583,28 +1583,31 @@
   const tocLinks = document.querySelectorAll('.toc-tree-link');
   const chapters = document.querySelectorAll('[id^="ch"].chapter');
 
+  let scrollSuppressTimer = null;
+
   function setActiveChapter(id) {
     tocItems.forEach(item => {
       item.classList.toggle('active', item.querySelector('a').getAttribute('href') === '#' + id);
     });
   }
 
-  // Click handler: immediately highlight
+  // Click handler: highlight immediately + suppress observer during scroll
+  function onTocClick(id) {
+    setActiveChapter(id);
+    clearTimeout(scrollSuppressTimer);
+    scrollSuppressTimer = setTimeout(() => { scrollSuppressTimer = null; }, 800);
+  }
+
   tocLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      setActiveChapter(link.getAttribute('href').slice(1));
-    });
+    link.addEventListener('click', () => onTocClick(link.getAttribute('href').slice(1)));
   });
-
-  // Also handle inline TOC clicks
   document.querySelectorAll('.toc-item').forEach(link => {
-    link.addEventListener('click', () => {
-      setActiveChapter(link.getAttribute('href').slice(1));
-    });
+    link.addEventListener('click', () => onTocClick(link.getAttribute('href').slice(1)));
   });
 
-  // IntersectionObserver for scroll-based tracking
+  // IntersectionObserver for scroll-based tracking (suppressed during programmatic scroll)
   const chapObserver = new IntersectionObserver((entries) => {
+    if (scrollSuppressTimer) return;
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         setActiveChapter(entry.target.id);
