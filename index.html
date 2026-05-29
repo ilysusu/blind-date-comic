@@ -29,6 +29,22 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
 
+  /* Anti-scraping */
+  body {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+  a, input, textarea { -webkit-user-select: text; user-select: text; }
+  img, svg { -webkit-user-drag: none; user-drag: none; pointer-events: none; }
+  a img, a svg { pointer-events: auto; }
+  @media print {
+    body::before { content: '本文受版权保护，禁止打印'; display: block; text-align: center; padding: 40px; font-size: 24px; }
+    .comic-container, .status-bar, .toc-sidebar, .scroll-top-btn { display: none !important; }
+  }
+
   body {
     background: var(--bg);
     font-family: 'Noto Sans SC', sans-serif;
@@ -1813,6 +1829,24 @@
   });
   scrollTopBtn.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // Anti-scraping
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('dragstart', e => e.preventDefault());
+  document.addEventListener('keydown', e => {
+    // F12, Ctrl+U, Ctrl+S, Ctrl+Shift+I/J/C, Ctrl+P
+    if (e.key === 'F12' ||
+        (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S' || e.key === 'p' || e.key === 'P')) ||
+        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.key === 'i' || e.key === 'j' || e.key === 'c'))) {
+      e.preventDefault();
+    }
+  });
+  // Disable screenshot shortcut (Cmd+Shift+3/4 on Mac)
+  document.addEventListener('keyup', e => {
+    if (e.metaKey && e.shiftKey && (e.key === '3' || e.key === '4' || e.key === '5')) {
+      e.preventDefault();
+    }
   });
 </script>
 
