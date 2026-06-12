@@ -3752,8 +3752,7 @@
 
 <!-- Status bar -->
 <div class="status-bar">
-  相亲记录 · _星河的故事 · 漫画版 &nbsp;|&nbsp;
-  👀 <b id="gc-visitors">-</b>
+  相亲记录 · _星河的故事 · 漫画版
 </div>
 
 <!-- PC Sidebar TOC -->
@@ -3781,8 +3780,15 @@
 <!-- Scroll to Top Button -->
 <button id="scroll-top" class="scroll-top-btn" aria-label="回到顶部">↑</button>
 
-<script data-goatcounter="https://ilysusu.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?f838b07bde2741a87b1b35e12afe9d7f";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
 <script>
   // Scroll-triggered fade-in animations
   const observer = new IntersectionObserver((entries) => {
@@ -3793,16 +3799,6 @@
     });
   }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-  // Fetch total visitor count from GoatCounter
-  fetch('https://ilysusu.goatcounter.com/counter/TOTAL.json')
-    .then(res => res.json())
-    .then(data => {
-      document.getElementById('gc-visitors').innerText = data.count;
-    })
-    .catch(() => {
-      document.getElementById('gc-visitors').innerText = '-';
-    });
 
   // Sidebar TOC: active chapter tracking
   const tocItems = document.querySelectorAll('.toc-tree-item');
